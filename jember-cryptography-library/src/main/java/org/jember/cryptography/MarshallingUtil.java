@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-import org.jember.cryptography.model.EncryptedValue;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.jember.cryptography.model.EncryptedValueDTO;
 import org.jember.cryptography.provider.EncryptionException;
 
 import java.io.IOException;
@@ -19,10 +19,10 @@ public class MarshallingUtil {
     static {
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.registerModule(new JSR310Module());
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
-    public static String marshal(EncryptedValue encryptedRecord) throws EncryptionException {
+    public static String marshal(EncryptedValueDTO encryptedRecord) throws EncryptionException {
         try {
             if (encryptedRecord == null) {
                 throw new EncryptionException("Cannot marshal a null object");
@@ -33,12 +33,12 @@ public class MarshallingUtil {
         }
     }
 
-    public static EncryptedValue unmarshal(String json) throws EncryptionException {
+    public static EncryptedValueDTO unmarshal(String json) throws EncryptionException {
         try {
             if (json == null) {
                 return null;
             }
-            return objectMapper.readValue(json, EncryptedValue.class);
+            return objectMapper.readValue(json, EncryptedValueDTO.class);
         } catch (IOException | RuntimeException e) {
             throw new EncryptionException("Error unmarshalling JSON: " + json, e);  //won't be a security problem because the JSON is always encrypted
         }

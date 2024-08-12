@@ -2,6 +2,7 @@ package org.jember.cryptography.keymanagement;
 
 import lombok.Data;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -41,5 +42,13 @@ public class AesKeyDTO {
 
     public String base64EncodedHmacKey() {
         return new String(Base64.getEncoder().encode(hmacKey));
+    }
+
+    public SecretKeySpec getAesKey() {
+        return new SecretKeySpec(aesKey, "AES");
+    }
+
+    public SecretKeySpec getHmacKey() {
+        return new SecretKeySpec(hmacKey, "HmacSHA256");
     }
 }

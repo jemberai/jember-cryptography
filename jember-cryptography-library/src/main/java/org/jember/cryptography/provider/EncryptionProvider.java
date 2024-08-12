@@ -24,15 +24,4 @@ public interface EncryptionProvider {
      */
     String decrypt(String encryptedValue) throws EncryptionException;
 
-
-    /**
-     * Has the value changed?
-     *
-     * @param initialValue - can be plain value or EncryptedValueWrapper Json
-     * @param proposedValue - can be plain value or EncryptedValueWrapper Json
-     *
-     * @return boolean
-     */
-    boolean hasChanged(String initialValue, String proposedValue);
-
 }

@@ -1,10 +1,7 @@
 package org.jember.cryptography;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jember.cryptography.model.EncryptedValue;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MarshallingUtilTest {
 
@@ -24,7 +21,7 @@ class MarshallingUtilTest {
     void downgrade() {
     }
 
-   // EncryptedValue getEncryptedValue() {
-      //  return new EncryptedValue();
+   // EncryptedValueDTO getEncryptedValue() {
+      //  return new EncryptedValueDTO();
     //}
 }
