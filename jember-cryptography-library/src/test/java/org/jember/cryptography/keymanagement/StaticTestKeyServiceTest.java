@@ -2,11 +2,13 @@ package org.jember.cryptography.keymanagement;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class KeyServiceStaticKeyImplTest {
+class StaticTestKeyServiceTest {
 
-    KeyService keyService = new KeyServiceStaticKeyImpl();
+    KeyService keyService = new StaticTestKeyService();
 
     @Test
     void getDefaultKey() {
@@ -14,7 +16,12 @@ class KeyServiceStaticKeyImplTest {
     }
 
     @Test
-    void getKey() {
+    void getKeyString() {
         assertNotNull(keyService.getKey("19aea7c1-e621-43f6-8bcc-e2851f78a871"));
+    }
+
+    @Test
+    void getKeyUUID() {
+        assertNotNull(keyService.getKey(UUID.randomUUID()));
     }
 }

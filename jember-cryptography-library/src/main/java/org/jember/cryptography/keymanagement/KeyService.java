@@ -7,6 +7,8 @@ import java.util.UUID;
  */
 public interface KeyService {
 
+    void setDefaultKey(AesKeyDTO key);
+
     AesKeyDTO getDefaultKey();
 
     AesKeyDTO getKey(String keyId);

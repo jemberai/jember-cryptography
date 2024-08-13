@@ -1,6 +1,7 @@
 package org.jember.cryptography.keymanagement;
 
 import lombok.Data;
+import lombok.NonNull;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
@@ -16,13 +17,25 @@ public class AesKeyDTO {
     private byte[] aesKey;
     private byte[] hmacKey;
 
-    public AesKeyDTO(UUID keyId, byte[] aesKey, byte[] hmacKey) {
+    /**
+     * Create an AesKeyDTO from a key id and byte arrays.
+     * @param keyId The key id.
+     * @param aesKey The AES key.
+     * @param hmacKey The HMAC key.
+     */
+    public AesKeyDTO(@NonNull UUID keyId, byte[] aesKey, byte[] hmacKey) {
         this.keyId = keyId;
         this.aesKey = aesKey;
         this.hmacKey = hmacKey;
     }
 
-    public AesKeyDTO(String keyId, String aesKey, String hmacKey) {
+    /**
+     * Create an AesKeyDTO from a base64 encoded key.
+     * @param keyId The key id.
+     * @param aesKey The base64 encoded AES key.
+     * @param hmacKey The base64 encoded HMAC key.
+     */
+    public AesKeyDTO(@NonNull String keyId, @NonNull String aesKey, @NonNull String hmacKey) {
         this.keyId = UUID.fromString(keyId);
         this.aesKey = Base64.getDecoder().decode(aesKey);
         this.hmacKey = Base64.getDecoder().decode(hmacKey);
