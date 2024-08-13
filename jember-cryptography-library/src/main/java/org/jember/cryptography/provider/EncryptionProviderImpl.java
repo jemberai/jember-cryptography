@@ -116,7 +116,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             /* Decrypt the message, given derived key and initialization vector. */
             Cipher cipher = Cipher.getInstance(ENC_ALGORITHM);  //Ciphers are not thread-safe
             IvParameterSpec ivSpec = new IvParameterSpec(encIv);
-            cipher.init(Cipher.DECRYPT_MODE, defaultKey.getAesKey(), ivSpec);
+
+            //get key used to decrypt the value
+            AesKeyDTO decryptKeyDto = keyService.getKey(encryptedValueDTO.keyId());
+
+            cipher.init(Cipher.DECRYPT_MODE, decryptKeyDto.getAesKey(), ivSpec);
 
             String plaintext = new String(cipher.doFinal(encBytes), StandardCharsets.UTF_8);
 
