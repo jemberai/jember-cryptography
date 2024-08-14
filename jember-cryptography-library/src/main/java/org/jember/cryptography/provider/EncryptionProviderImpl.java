@@ -16,7 +16,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Objects;
 import java.util.Random;
 
@@ -60,12 +59,9 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             cipher.init(Cipher.ENCRYPT_MODE, defaultKey.getAesKey(), ivSpec);
 
             byte[] ciphertext = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
-            String base64ofEncryptedValue = Base64.getEncoder().encodeToString(ciphertext);
-            String base64ofIV = Base64.getEncoder().encodeToString(ivSpec.getIV());
-            String base64ofHashOfEncryptedValueAndIV = Base64.getEncoder().encodeToString( hmacHash(ciphertext, ivSpec.getIV()) );
 
-            EncryptedValueDTO encryptedValueDTO = new EncryptedValueDTO(ID, defaultKey.getKeyId().toString(),
-                    base64ofHashOfEncryptedValueAndIV, base64ofEncryptedValue, base64ofIV);
+            EncryptedValueDTO encryptedValueDTO = new EncryptedValueDTO(ID, defaultKey.getKeyId(),
+                    hmacHash(ciphertext, ivSpec.getIV()), ciphertext, ivSpec.getIV());
 
             return MarshallingUtil.marshal(encryptedValueDTO);
 
@@ -92,8 +88,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             sha256_HMAC.init(defaultKey.getHmacKey());
 
             byte[] data = ArrayUtils.addAll(encryptedValue, initialisationVector);
-            byte[] hashBytes = sha256_HMAC.doFinal(data);
-            return hashBytes;
+            return sha256_HMAC.doFinal(data);
         }
         catch (RuntimeException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new EncryptionException("Error performing HMAC", e);
@@ -101,15 +96,16 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     }
 
     @Override
-    public String decrypt(@NonNull String encryptedValue) throws EncryptionException {
+    public byte[] decrypt(@NonNull String encryptedValue) throws EncryptionException {
         try {
             EncryptedValueDTO encryptedValueDTO = MarshallingUtil.unmarshal(encryptedValue);
 
             //verify the HMAC - only proceed to decrypt if the hash of the encrypted value + IV matches the stored hash
-            byte[] encBytes = Base64.getDecoder().decode(Objects.requireNonNull(encryptedValueDTO).encryptedValue());
-            byte[] encIv = Base64.getDecoder().decode(encryptedValueDTO.initializationVector());
+            byte[] encBytes = Objects.requireNonNull(encryptedValueDTO).encryptedValue(); //Base64.getDecoder().decode(Objects.requireNonNull(encryptedValueDTO).encryptedValue());
+            byte[] encIv = Objects.requireNonNull(encryptedValueDTO.initializationVector());//Base64.getDecoder().decode(encryptedValueDTO.initializationVector());
             byte[] hashBytes = hmacHash(encBytes, encIv);
-            if (!Arrays.equals(hashBytes, Base64.getDecoder().decode(encryptedValueDTO.hmac()))) {
+
+            if (!Arrays.equals(hashBytes, encryptedValueDTO.hmac())) {
                 throw new EncryptionException("HMAC of encrypted value/IV does not match computed HMAC.  This may be due to the wrong encryption.VeloEncryptionProviderV1.key.<key-uuid>.hmac");
             }
 
@@ -122,16 +118,24 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
             cipher.init(Cipher.DECRYPT_MODE, decryptKeyDto.getAesKey(), ivSpec);
 
-            String plaintext = new String(cipher.doFinal(encBytes), StandardCharsets.UTF_8);
-
-            if (NULL_VALUE.equals(plaintext)) {
-                plaintext = null;   //'decode' the null
-            }
-            return plaintext;
+            return cipher.doFinal(encBytes);
         }
         catch (RuntimeException | NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException |
                BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             throw new EncryptionException("Error performing decryption", e);
         }
+    }
+
+    @Override
+    public String decryptToString(String encryptedValue) throws EncryptionException {
+
+        byte[] encBytes = decrypt(encryptedValue);
+
+        String plaintext = new String(encBytes, StandardCharsets.UTF_8);
+
+        if (NULL_VALUE.equals(plaintext)) {
+            plaintext = null;   //'decode' the null
+        }
+        return plaintext;
     }
 }

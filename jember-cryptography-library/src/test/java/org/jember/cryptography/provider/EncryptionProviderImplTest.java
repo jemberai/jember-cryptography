@@ -22,7 +22,6 @@ class EncryptionProviderImplTest {
 
         @Test
         void getKeyProviderId() {
-
             assertEquals(encryptionProvider.getKeyProviderId(), "DefaultJemberEncryptionProviderV1");
         }
 
@@ -49,7 +48,7 @@ class EncryptionProviderImplTest {
 
             val encrypted = encryptionProvider.encrypt(someval);
 
-            val decrypted = encryptionProvider.decrypt(encrypted);
+            val decrypted = encryptionProvider.decryptToString(encrypted);
 
             assertEquals(someval, decrypted);
         }
@@ -60,7 +59,7 @@ class EncryptionProviderImplTest {
 
             val encrypted = encryptionProvider.encrypt(someval);
 
-            val decrypted = encryptionProvider.decrypt(encrypted);
+            val decrypted = encryptionProvider.decryptToString(encrypted);
 
             assertNull(decrypted);
         }
@@ -92,7 +91,7 @@ class EncryptionProviderImplTest {
 
             val encrypted = encryptionProvider.encrypt(someval);
 
-            val decrypted = encryptionProvider.decrypt(encrypted);
+            val decrypted = encryptionProvider.decryptToString(encrypted);
 
             assertEquals(someval, decrypted);
         }
@@ -105,7 +104,7 @@ class EncryptionProviderImplTest {
 
             val encryptedFoo = encryptionProvider.encrypt(foo);
 
-            val decrypted = encryptionProvider.decrypt(encryptedFoo);
+            val decrypted = encryptionProvider.decryptToString(encryptedFoo);
 
             assertEquals(foo, decrypted);
 
@@ -114,10 +113,10 @@ class EncryptionProviderImplTest {
 
             //new key works
             val encryptedBar = encryptionProvider.encrypt(bar);
-            assertEquals(bar, encryptionProvider.decrypt(encryptedBar));
+            assertEquals(bar, encryptionProvider.decryptToString(encryptedBar));
 
             //decrypt with original key
-            val decryptedFoo = encryptionProvider.decrypt(encryptedFoo);
+            val decryptedFoo = encryptionProvider.decryptToString(encryptedFoo);
             assertEquals(foo, decryptedFoo);
         }
     }

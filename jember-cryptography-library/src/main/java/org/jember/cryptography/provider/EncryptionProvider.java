@@ -22,6 +22,7 @@ public interface EncryptionProvider {
      * @return the decrypted value
      * @throws EncryptionException
      */
-    String decrypt(String encryptedValue) throws EncryptionException;
+    byte[] decrypt(String encryptedValue) throws EncryptionException;
 
+    String decryptToString(String encryptedValue) throws EncryptionException;
 }

@@ -1,5 +1,7 @@
 package org.jember.cryptography.model;
 
+import java.util.UUID;
+
 /**
  * EncryptedValueDTO record
  * @param provider id of the encryption system
@@ -9,8 +11,8 @@ package org.jember.cryptography.model;
  * @param initializationVector base64 of the initialization vector of the encrypted value
  */
 public record EncryptedValueDTO(String provider,
-                                String keyId,
-                                String hmac,
-                                String encryptedValue,
-                                String initializationVector) {
+                                UUID keyId,
+                                byte[] hmac,
+                                byte[] encryptedValue,
+                                byte[] initializationVector) {
 }
