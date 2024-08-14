@@ -20,6 +20,7 @@
   <modules>
     <module>jember-cryptography-library</module>
     <module>key-generator</module>
+    <module>jember-cryptography-jpa</module>
   </modules>
 
   <organization>
