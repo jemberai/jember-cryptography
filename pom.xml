@@ -41,6 +41,10 @@
     <module>jember-cryptography-jpa</module>
   </modules>
 
+  <properties>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/**/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+  </properties>
+
   <organization>
     <name>jember.ai</name>
     <url>https://jember.ai</url>
