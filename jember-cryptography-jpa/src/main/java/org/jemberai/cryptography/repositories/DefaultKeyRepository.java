@@ -30,4 +30,6 @@ import java.util.UUID;
 public interface DefaultKeyRepository extends JpaRepository<DefaultKey, UUID> {
 
     Optional<DefaultKey> findByClientId(String clientId);
+
+    void deleteByClientId(String clientId);
 }
