@@ -56,6 +56,8 @@ public class EncryptionKeys {
     private String clientId;
 
     @NotNull
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(length = 36, columnDefinition = "VARCHAR(36)")
     private UUID keyId;
 
     @Transient

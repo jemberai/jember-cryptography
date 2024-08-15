@@ -27,7 +27,6 @@ import java.util.UUID;
 /**
  * Created by jt, Spring Framework Guru.
  */
-public interface AesKeyRepository extends JpaRepository<EncryptionKeys, UUID> {
-
+public interface EncryptionKeysRepository extends JpaRepository<EncryptionKeys, UUID> {
     Optional<EncryptionKeys> findByClientIdAndKeyId(String clientId, UUID keyId);
 }

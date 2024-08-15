@@ -23,8 +23,8 @@ import org.jemberai.cryptography.keymanagement.KeyService;
 import org.jemberai.cryptography.keymanagement.StaticTestKeyService;
 import org.jemberai.cryptography.provider.EncryptionProvider;
 import org.jemberai.cryptography.provider.EncryptionProviderImpl;
-import org.jemberai.cryptography.repositories.AesKeyRepository;
-import org.jemberai.cryptography.repositories.DefaultKeyRepository;
+import org.jemberai.cryptography.repositories.DefaultEncryptionKeyRepository;
+import org.jemberai.cryptography.repositories.EncryptionKeysRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,7 +40,7 @@ public class DefaultConfig {
     }
 
     @Bean
-    public KeyService keyService(AesKeyRepository aesKeyRepository, DefaultKeyRepository defaultKeyRepository) {
+    public KeyService keyService(EncryptionKeysRepository aesKeyRepository, DefaultEncryptionKeyRepository defaultKeyRepository) {
         return new JpaKeyService(aesKeyRepository, defaultKeyRepository);
     }
 }

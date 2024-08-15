@@ -23,8 +23,8 @@ import org.jemberai.cryptography.domain.EncryptionKeys;
 import org.jemberai.cryptography.keymanagement.AesKeyDTO;
 import org.jemberai.cryptography.keymanagement.KeyService;
 import org.jemberai.cryptography.keymanagement.KeyUtils;
-import org.jemberai.cryptography.repositories.AesKeyRepository;
-import org.jemberai.cryptography.repositories.DefaultKeyRepository;
+import org.jemberai.cryptography.repositories.DefaultEncryptionKeyRepository;
+import org.jemberai.cryptography.repositories.EncryptionKeysRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,10 +41,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class JpaIntegrationTest {
 
     @Autowired
-    AesKeyRepository aesKeyRepository;
+    EncryptionKeysRepository aesKeyRepository;
 
     @Autowired
-    DefaultKeyRepository defaultKeyRepository;
+    DefaultEncryptionKeyRepository defaultKeyRepository;
 
     @Autowired
     KeyService keyService;

@@ -23,8 +23,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jemberai.cryptography.domain.DefaultEncryptionKey;
 import org.jemberai.cryptography.domain.EncryptionKeys;
-import org.jemberai.cryptography.repositories.AesKeyRepository;
-import org.jemberai.cryptography.repositories.DefaultKeyRepository;
+import org.jemberai.cryptography.repositories.DefaultEncryptionKeyRepository;
+import org.jemberai.cryptography.repositories.EncryptionKeysRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -40,8 +40,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JpaKeyService implements KeyService {
 
-    private final AesKeyRepository aesKeyRepository;
-    private final DefaultKeyRepository defaultKeyRepository;
+    private final EncryptionKeysRepository aesKeyRepository;
+    private final DefaultEncryptionKeyRepository defaultKeyRepository;
 
     /**
      * Add a key to the key store. The key is not active until it is set as the default key.
@@ -54,12 +54,16 @@ public class JpaKeyService implements KeyService {
     @Override
     public AesKeyDTO addKey(@NonNull String clientId, @NonNull AesKeyDTO key) {
 
+        if (!clientId.equals(key.getClientId())){
+            throw new IllegalArgumentException("Client id does not match key client id");
+        }
+
         aesKeyRepository.findByClientIdAndKeyId(clientId, key.getKeyId())
                 .ifPresent(aesKey -> {
                     throw new IllegalArgumentException("Key already exists");
                 });
 
-        EncryptionKeys savedKey = aesKeyRepository.save(convert(key));
+        EncryptionKeys savedKey = aesKeyRepository.saveAndFlush(convert(key));
 
         log.debug("Key saved with id: {}", savedKey.getKeyId());
 

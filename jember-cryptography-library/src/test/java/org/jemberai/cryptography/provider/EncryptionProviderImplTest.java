@@ -20,6 +20,7 @@ package org.jemberai.cryptography.provider;
 
 import lombok.val;
 import org.jemberai.cryptography.MarshallingUtil;
+import org.jemberai.cryptography.keymanagement.AesKeyDTO;
 import org.jemberai.cryptography.keymanagement.InMemoryKeyService;
 import org.jemberai.cryptography.keymanagement.KeyUtils;
 import org.jemberai.cryptography.keymanagement.StaticTestKeyService;
@@ -112,6 +113,26 @@ class EncryptionProviderImplTest {
             assertEquals(someval, decrypted);
         }
 
+        @DisplayName("Test decrypting altered payload")
+        @Test
+        void decryptAlteredPayload() {
+            val someval = "foo";
+
+            val encrypted = encryptionProvider.encrypt(clientId, someval);
+
+            EncryptedValueDTO dto = MarshallingUtil.unmarshal(encrypted);
+
+            EncryptedValueDTO altered = new EncryptedValueDTO(dto.provider(),
+                    dto.keyId(),
+                    dto.initializationVector(),
+                    "foo bar stuff".getBytes(),
+                    dto.hmac());
+
+            String alteredString = MarshallingUtil.marshal(altered);
+
+            assertThrows(EncryptionException.class, () -> encryptionProvider.decryptToString(clientId, alteredString));
+        }
+
         @DisplayName("Test decrypting with multiple keys")
         @Test
         void decryptWithMultipleKeys() {
@@ -134,6 +155,49 @@ class EncryptionProviderImplTest {
             //decrypt with original key
             val decryptedFoo = encryptionProvider.decryptToString(clientId, encryptedFoo);
             assertEquals(foo, decryptedFoo);
+        }
+
+        @Test
+        void testDtoEquals() {
+            val someval = "foo";
+
+            val encrypted = encryptionProvider.encrypt(clientId, someval);
+
+            EncryptedValueDTO dto = MarshallingUtil.unmarshal(encrypted);
+
+            EncryptedValueDTO dto2 = new EncryptedValueDTO(dto.provider(),
+                    dto.keyId(),
+                    dto.hmac(),
+                    dto.encryptedValue(),
+                    dto.initializationVector());
+
+            assertEquals(dto, dto2);
+            assertThat(dto).hasSameHashCodeAs(dto2);
+        }
+
+        @Test
+        void testNullAesCreateDto() {
+
+            assertThrows(NullPointerException.class, () -> AesKeyDTO.builder().build());
+            assertThrows(NullPointerException.class, () -> AesKeyDTO.builder().clientId("foo").build());
+        }
+
+        @DisplayName("Test decrypting with null value")
+        @Test
+        void decryptNull() {
+            String someval = null;
+
+            val encrypted = encryptionProvider.encrypt(clientId, someval);
+
+            val decrypted = encryptionProvider.decryptToString(clientId, encrypted);
+
+            assertNull(decrypted);
+        }
+
+        @DisplayName("Test decrypting invalid client")
+        @Test
+        void decryptBadClient() {
+            assertThrows(EncryptionException.class, () -> encryptionProvider.decryptToString("bad-client-id", "encrypted-value"));
         }
     }
 }

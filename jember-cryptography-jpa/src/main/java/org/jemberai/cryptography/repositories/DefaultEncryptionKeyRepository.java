@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * Created by jt, Spring Framework Guru.
  */
-public interface DefaultKeyRepository extends JpaRepository<DefaultEncryptionKey, UUID> {
+public interface DefaultEncryptionKeyRepository extends JpaRepository<DefaultEncryptionKey, UUID> {
 
     Optional<DefaultEncryptionKey> findByClientId(String clientId);
 

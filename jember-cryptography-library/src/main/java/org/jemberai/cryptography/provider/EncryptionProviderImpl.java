@@ -43,7 +43,6 @@ import java.util.UUID;
  * Created by jt, Spring Framework Guru.
  */
 @Slf4j
-
 public class EncryptionProviderImpl implements EncryptionProvider {
 
     public static final String ENC_ALGORITHM = "AES/GCM/NoPadding";
@@ -78,13 +77,12 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public EncryptedValueDTO encrypt(String clientId, byte[] value) throws EncryptionException {
         try {
+            AesKeyDTO key = keyService.getDefaultKey(clientId);
             Cipher cipher = Cipher.getInstance(ENC_ALGORITHM);  //Ciphers are not thread-safe
             IvParameterSpec ivSpec = randomIV();
-            cipher.init(Cipher.ENCRYPT_MODE, keyService.getDefaultKey(clientId).getAesKeySpec(), new GCMParameterSpec(128, ivSpec.getIV()));
+            cipher.init(Cipher.ENCRYPT_MODE, key.getAesKeySpec(), new GCMParameterSpec(128, ivSpec.getIV()));
 
             byte[] ciphertext = cipher.doFinal(value);
-
-            AesKeyDTO key = keyService.getDefaultKey(clientId);
 
             return new EncryptedValueDTO(ID, key.getKeyId(),
                     hmacHash(key.getClientId(), key.getKeyId(),  ciphertext, ivSpec.getIV()), ciphertext, ivSpec.getIV());

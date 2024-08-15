@@ -65,16 +65,6 @@ public class AesKeyDTO {
         this.hmacKey = Base64.getDecoder().decode(hmacKey);
     }
 
-    /**
-     * Validate the AES key.
-     * @return boolean
-     */
-    public boolean isAesKeyValid() {
-        return aesKey != null && aesKey.length != 16 && aesKey.length != 24 && aesKey.length != 32 ;
-    }
-
-
-
     public SecretKeySpec getAesKeySpec() {
         return new SecretKeySpec(aesKey, "AES");
     }

@@ -66,23 +66,4 @@ public class MarshallingUtil {
         }
     }
 
-    /**
-     * Marshal the object to JSON and then unmarshal it again as the requested class
-     * <p>
-     * The idea being that you pass in an entity with PII and convert it to a non-PII entity
-     *
-     * @param objToClone
-     * @param unmarshalAs
-     * @param <T>
-     * @return
-     * @throws EncryptionException
-     */
-    public static <T> T downgrade(Object objToClone, Class<T> unmarshalAs) throws EncryptionException {
-        try {
-            String json = objectMapper.writeValueAsString(objToClone);
-            return objectMapper.readValue(json, unmarshalAs);
-        } catch (IOException | RuntimeException e) {
-            throw new EncryptionException("Error cloning object to class: " + unmarshalAs, e);
-        }
-    }
 }
