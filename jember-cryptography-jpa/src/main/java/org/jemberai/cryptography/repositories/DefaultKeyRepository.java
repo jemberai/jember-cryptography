@@ -18,7 +18,7 @@
 
 package org.jemberai.cryptography.repositories;
 
-import org.jemberai.cryptography.domain.DefaultKey;
+import org.jemberai.cryptography.domain.DefaultEncryptionKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -27,9 +27,9 @@ import java.util.UUID;
 /**
  * Created by jt, Spring Framework Guru.
  */
-public interface DefaultKeyRepository extends JpaRepository<DefaultKey, UUID> {
+public interface DefaultKeyRepository extends JpaRepository<DefaultEncryptionKey, UUID> {
 
-    Optional<DefaultKey> findByClientId(String clientId);
+    Optional<DefaultEncryptionKey> findByClientId(String clientId);
 
     void deleteByClientId(String clientId);
 }

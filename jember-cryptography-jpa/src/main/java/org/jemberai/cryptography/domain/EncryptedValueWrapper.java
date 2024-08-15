@@ -16,18 +16,24 @@
  *
  */
 
-package org.jemberai.cryptography.repositories;
+package org.jemberai.cryptography.domain;
 
-import org.jemberai.cryptography.domain.EncryptionKeys;
-import org.springframework.data.jpa.repository.JpaRepository;
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Created by jt, Spring Framework Guru.
  */
-public interface AesKeyRepository extends JpaRepository<EncryptionKeys, UUID> {
-
-    Optional<EncryptionKeys> findByClientIdAndKeyId(String clientId, UUID keyId);
+@Getter
+@Setter
+@Embeddable
+public class EncryptedValueWrapper {
+    private String provider;
+    private UUID keyId;
+    private byte[] hmac;
+    private byte[] encryptedValue;
+    private byte[] initializationVector;
 }

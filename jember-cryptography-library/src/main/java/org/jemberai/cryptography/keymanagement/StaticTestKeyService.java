@@ -27,7 +27,7 @@ import java.util.UUID;
  *
  * Created by jt, Spring Framework Guru.
  */
-@Deprecated
+@Deprecated(since = "0.1.0", forRemoval = false)
 public class StaticTestKeyService implements KeyService {
 
     public final AesKeyDTO defaultKey = new AesKeyDTO("test-client", "19aea7c1-e621-43f6-8bcc-e2851f78a871",

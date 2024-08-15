@@ -40,8 +40,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AesKeyListener.class)
-public class AesKey {
+@EntityListeners(EncryptionKeysListener.class)
+public class EncryptionKeys {
     @Id
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.TIME)
@@ -72,7 +72,7 @@ public class AesKey {
             @AttributeOverride(name = "initializationVector", column = @Column(name = "aes_intitialization_vector")),
             @AttributeOverride(name = "encryptedValue", column = @Column(name = "aes_encrypted_value"))
     })
-    private EncryptedValue encryptedAesKeyValue;
+    private EncryptedValueWrapper encryptedAesKeyValue;
 
     @Embedded
     @AttributeOverrides({
@@ -82,7 +82,7 @@ public class AesKey {
             @AttributeOverride(name = "initializationVector", column = @Column(name = "hmac_intitialization_vector")),
             @AttributeOverride(name = "encryptedValue", column = @Column(name = "hmac_encrypted_value"))
     })
-    private EncryptedValue encryptedHmacKeyValue;
+    private EncryptedValueWrapper encryptedHmacKeyValue;
 
     @CreationTimestamp
     private LocalDateTime createdDate;
@@ -94,15 +94,15 @@ public class AesKey {
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        Class<?> oEffectiveClass = (o instanceof HibernateProxy) ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = (this instanceof HibernateProxy) ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        AesKey aesKey = (AesKey) o;
-        return getId() != null && Objects.equals(getId(), aesKey.getId());
+        EncryptionKeys aesKeyEq = (EncryptionKeys) o;
+        return getId() != null && Objects.equals(getId(), aesKeyEq.getId());
     }
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+        return (this instanceof HibernateProxy) ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }

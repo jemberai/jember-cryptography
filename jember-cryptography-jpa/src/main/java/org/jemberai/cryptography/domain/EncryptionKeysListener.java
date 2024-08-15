@@ -33,30 +33,30 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class AesKeyListener {
+public class EncryptionKeysListener {
 
     private final EncryptionProvider encryptionProvider;
 
     public static final String JEMBER_INTERNAL = "JEMBER_INTERNAL";
 
     @PrePersist
-    public void prePersist(AesKey aesKey){
+    public void prePersist(EncryptionKeys aesKey){
         setEncryptedFields(aesKey);
     }
 
     @PreUpdate
-    public void preUpdate(AesKey aesKey){
+    public void preUpdate(EncryptionKeys aesKey){
         setEncryptedFields(aesKey);
     }
 
     @PostLoad
-    public void postLoad(AesKey aesKey) {
+    public void postLoad(EncryptionKeys aesKey) {
         log.debug("Decrypting AES Key");
         aesKey.setHmacKey(encryptionProvider.decrypt(JEMBER_INTERNAL, convert(aesKey.getEncryptedHmacKeyValue())));
         aesKey.setAesKey(encryptionProvider.decrypt(JEMBER_INTERNAL, convert(aesKey.getEncryptedAesKeyValue())));
     }
 
-    private void setEncryptedFields(AesKey aesKey){
+    private void setEncryptedFields(EncryptionKeys aesKey){
         log.debug("Encrypting AES Key");
         EncryptedValueDTO aesDto = encryptionProvider.encrypt(JEMBER_INTERNAL, aesKey.getAesKey());
         EncryptedValueDTO hmacDto = encryptionProvider.encrypt(JEMBER_INTERNAL, aesKey.getHmacKey());
@@ -65,8 +65,8 @@ public class AesKeyListener {
         aesKey.setEncryptedHmacKeyValue(convert(hmacDto));
     }
 
-    private EncryptedValue convert(EncryptedValueDTO encryptedValueDTO) {
-        EncryptedValue encryptedValue = new EncryptedValue();
+    private EncryptedValueWrapper convert(EncryptedValueDTO encryptedValueDTO) {
+        EncryptedValueWrapper encryptedValue = new EncryptedValueWrapper();
         encryptedValue.setKeyId(encryptedValueDTO.keyId());
         encryptedValue.setProvider(encryptedValueDTO.provider());
         encryptedValue.setHmac(encryptedValueDTO.hmac());
@@ -76,7 +76,7 @@ public class AesKeyListener {
         return encryptedValue;
     }
 
-    private EncryptedValueDTO convert(EncryptedValue encryptedValue) {
+    private EncryptedValueDTO convert(EncryptedValueWrapper encryptedValue) {
         return new EncryptedValueDTO(encryptedValue.getProvider(),
                         encryptedValue.getKeyId(),
                         encryptedValue.getHmac(),

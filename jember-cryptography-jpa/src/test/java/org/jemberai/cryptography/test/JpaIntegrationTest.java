@@ -18,8 +18,8 @@
 
 package org.jemberai.cryptography.test;
 
-import org.jemberai.cryptography.domain.AesKey;
-import org.jemberai.cryptography.domain.DefaultKey;
+import org.jemberai.cryptography.domain.DefaultEncryptionKey;
+import org.jemberai.cryptography.domain.EncryptionKeys;
 import org.jemberai.cryptography.keymanagement.AesKeyDTO;
 import org.jemberai.cryptography.keymanagement.KeyService;
 import org.jemberai.cryptography.keymanagement.KeyUtils;
@@ -31,13 +31,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by jt, Spring Framework Guru.
  */
 @SpringBootTest
-public class JpaIntegrationTest {
+class JpaIntegrationTest {
 
     @Autowired
     AesKeyRepository aesKeyRepository;
@@ -52,20 +53,20 @@ public class JpaIntegrationTest {
     void testAddAndGetKey() {
         AesKeyDTO aesKeyDTO = KeyUtils.generateAesKeyDTO();
 
-        AesKey aesKey = AesKey.builder()
+        EncryptionKeys aesKey = EncryptionKeys.builder()
                 .clientId("test-client")
                 .keyId(aesKeyDTO.getKeyId())
                 .aesKey(aesKeyDTO.getAesKey())
                 .hmacKey(aesKeyDTO.getHmacKey())
                 .build();
 
-        AesKey savedAesKey = aesKeyRepository.save(aesKey);
+        EncryptionKeys savedAesKey = aesKeyRepository.save(aesKey);
 
         assertNotNull(savedAesKey);
         assertNotNull(savedAesKey.getHmacKey());
         assertNotNull(savedAesKey.getEncryptedAesKeyValue().getKeyId());
 
-        AesKey retrievedAesKey = aesKeyRepository.findById(savedAesKey.getId()).get();
+        EncryptionKeys retrievedAesKey = aesKeyRepository.findById(savedAesKey.getId()).get();
 
         assertNotNull(retrievedAesKey);
         assertNotNull(retrievedAesKey.getHmacKey());
@@ -79,18 +80,22 @@ public class JpaIntegrationTest {
     void testJPAKeyService() {
         AesKeyDTO aesKeyDTO = KeyUtils.generateAesKeyDTO();
 
-        AesKey aesKey = AesKey.builder()
+        EncryptionKeys aesKey = EncryptionKeys.builder()
                 .clientId("test-client")
                 .keyId(aesKeyDTO.getKeyId())
                 .aesKey(aesKeyDTO.getAesKey())
                 .hmacKey(aesKeyDTO.getHmacKey())
                 .build();
 
-        AesKey savedAesKey = aesKeyRepository.save(aesKey);
+        EncryptionKeys savedAesKey = aesKeyRepository.save(aesKey);
+
+        assertThat(savedAesKey).isNotNull();
+        assertThat(savedAesKey.getKeyId()).isEqualTo(aesKeyDTO.getKeyId());
 
         keyService.setDefaultKey("test-client", aesKeyDTO);
 
-        List<DefaultKey> aesKeys = defaultKeyRepository.findAll();
+        List<DefaultEncryptionKey> aesKeys = defaultKeyRepository.findAll();
+        assertThat(aesKeys).hasSizeGreaterThan(0);
 
         AesKeyDTO retrievedAesKey = keyService.getDefaultKey("test-client");
 

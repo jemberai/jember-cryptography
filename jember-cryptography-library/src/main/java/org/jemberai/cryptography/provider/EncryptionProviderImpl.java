@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright 2023 - 2024 the original author or authors.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * https://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.jemberai.cryptography.provider;
 
 import lombok.NonNull;
@@ -10,6 +28,7 @@ import org.jemberai.cryptography.keymanagement.KeyService;
 import org.jemberai.cryptography.model.EncryptedValueDTO;
 
 import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -18,7 +37,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -28,11 +46,10 @@ import java.util.UUID;
 
 public class EncryptionProviderImpl implements EncryptionProvider {
 
-    public static final String ENC_ALGORITHM = "AES/CBC/PKCS5Padding";
+    public static final String ENC_ALGORITHM = "AES/GCM/NoPadding";
 
     private static final String ID = "DefaultJemberEncryptionProviderV1";
     private static final String NULL_VALUE = "Property Provided is Null";
-    private static final Random random = new SecureRandom();
 
     private final KeyService keyService;
 
@@ -63,7 +80,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         try {
             Cipher cipher = Cipher.getInstance(ENC_ALGORITHM);  //Ciphers are not thread-safe
             IvParameterSpec ivSpec = randomIV();
-            cipher.init(Cipher.ENCRYPT_MODE, keyService.getDefaultKey(clientId).getAesKeySpec(), ivSpec);
+            cipher.init(Cipher.ENCRYPT_MODE, keyService.getDefaultKey(clientId).getAesKeySpec(), new GCMParameterSpec(128, ivSpec.getIV()));
 
             byte[] ciphertext = cipher.doFinal(value);
 
@@ -84,6 +101,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
      * @return IvParameterSpec
      */
     private static IvParameterSpec randomIV() {
+        SecureRandom random = new SecureRandom();
         byte[] iv = new byte[16];
         random.nextBytes(iv);
         return new IvParameterSpec(iv);
@@ -91,11 +109,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
     private byte[] hmacHash(String clientId, UUID keyId, byte[] encryptedValue, byte[] initialisationVector) throws EncryptionException {
         try {
-            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-            sha256_HMAC.init(keyService.getKey(clientId, keyId).getHmacKeySpec());
+            Mac sha256HMAC = Mac.getInstance("HmacSHA256");
+            sha256HMAC.init(keyService.getKey(clientId, keyId).getHmacKeySpec());
 
             byte[] data = ArrayUtils.addAll(encryptedValue, initialisationVector);
-            return sha256_HMAC.doFinal(data);
+            return sha256HMAC.doFinal(data);
         }
         catch (RuntimeException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new EncryptionException("Error performing HMAC", e);
@@ -115,8 +133,8 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             AesKeyDTO decryptKeyDto = keyService.getKey(clientId, encryptedValueDTO.keyId());
 
             //verify the HMAC - only proceed to decrypt if the hash of the encrypted value + IV matches the stored hash
-            byte[] encBytes = Objects.requireNonNull(encryptedValueDTO).encryptedValue(); //Base64.getDecoder().decode(Objects.requireNonNull(encryptedValueDTO).encryptedValue());
-            byte[] encIv = Objects.requireNonNull(encryptedValueDTO.initializationVector());//Base64.getDecoder().decode(encryptedValueDTO.initializationVector());
+            byte[] encBytes = Objects.requireNonNull(encryptedValueDTO).encryptedValue();
+            byte[] encIv = Objects.requireNonNull(encryptedValueDTO.initializationVector());
             byte[] hashBytes = hmacHash(clientId, decryptKeyDto.getKeyId(), encBytes, encIv);
 
             if (!Arrays.equals(hashBytes, encryptedValueDTO.hmac())) {
@@ -127,7 +145,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             Cipher cipher = Cipher.getInstance(ENC_ALGORITHM);  //Ciphers are not thread-safe
             IvParameterSpec ivSpec = new IvParameterSpec(encIv);
 
-            cipher.init(Cipher.DECRYPT_MODE, decryptKeyDto.getAesKeySpec(), ivSpec);
+            cipher.init(Cipher.DECRYPT_MODE, decryptKeyDto.getAesKeySpec(), new GCMParameterSpec(128, ivSpec.getIV()));
 
             return cipher.doFinal(encBytes);
         }

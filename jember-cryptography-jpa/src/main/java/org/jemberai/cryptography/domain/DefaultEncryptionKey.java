@@ -41,7 +41,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DefaultKey {
+public class DefaultEncryptionKey {
     @Id
     @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.TIME)
@@ -57,7 +57,7 @@ public class DefaultKey {
     private String clientId;
 
     @OneToOne
-    private AesKey defaultKey;
+    private EncryptionKeys defaultKey;
 
     @CreationTimestamp
     private LocalDateTime createdDate;

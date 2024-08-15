@@ -21,8 +21,8 @@ package org.jemberai.cryptography.keymanagement;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jemberai.cryptography.domain.AesKey;
-import org.jemberai.cryptography.domain.DefaultKey;
+import org.jemberai.cryptography.domain.DefaultEncryptionKey;
+import org.jemberai.cryptography.domain.EncryptionKeys;
 import org.jemberai.cryptography.repositories.AesKeyRepository;
 import org.jemberai.cryptography.repositories.DefaultKeyRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +59,7 @@ public class JpaKeyService implements KeyService {
                     throw new IllegalArgumentException("Key already exists");
                 });
 
-        AesKey savedKey = aesKeyRepository.save(convert(key));
+        EncryptionKeys savedKey = aesKeyRepository.save(convert(key));
 
         log.debug("Key saved with id: {}", savedKey.getKeyId());
 
@@ -77,13 +77,13 @@ public class JpaKeyService implements KeyService {
     @Override
     public void setDefaultKey(@NonNull String clientId, @NonNull AesKeyDTO key) {
 
-        AesKey savedKey = aesKeyRepository.findByClientIdAndKeyId(clientId, key.getKeyId())
+        EncryptionKeys savedKey = aesKeyRepository.findByClientIdAndKeyId(clientId, key.getKeyId())
                 .orElseGet(() -> aesKeyRepository.save(convert(key)));
 
         // delete the existing default key. Simplest way to handle this vs checking if it exists & updating.
         defaultKeyRepository.deleteByClientId(clientId);
 
-        defaultKeyRepository.save(DefaultKey.builder()
+        defaultKeyRepository.save(DefaultEncryptionKey.builder()
                 .clientId(clientId)
                 .defaultKey(savedKey)
                 .build());
@@ -92,7 +92,7 @@ public class JpaKeyService implements KeyService {
     @Override
     public AesKeyDTO getDefaultKey(@NonNull String clientId) {
         return defaultKeyRepository.findByClientId(clientId)
-                .map(DefaultKey::getDefaultKey)
+                .map(DefaultEncryptionKey::getDefaultKey)
                 .map(this::convert)
                 .orElse(null);
     }
@@ -111,8 +111,8 @@ public class JpaKeyService implements KeyService {
                 .orElse(null);
     }
 
-    public AesKey convert(AesKeyDTO aesKeyDTO) {
-        return AesKey.builder()
+    public EncryptionKeys convert(AesKeyDTO aesKeyDTO) {
+        return EncryptionKeys.builder()
                 .clientId(aesKeyDTO.getClientId())
                 .keyId(aesKeyDTO.getKeyId())
                 .hmacKey(aesKeyDTO.getHmacKey())
@@ -120,7 +120,7 @@ public class JpaKeyService implements KeyService {
                 .build();
     }
 
-    public AesKeyDTO convert(AesKey aesKey) {
+    public AesKeyDTO convert(EncryptionKeys aesKey) {
         return AesKeyDTO.builder()
                 .clientId(aesKey.getClientId())
                 .keyId(aesKey.getKeyId())

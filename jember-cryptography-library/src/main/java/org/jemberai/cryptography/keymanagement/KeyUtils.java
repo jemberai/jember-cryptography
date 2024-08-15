@@ -29,6 +29,11 @@ import java.util.UUID;
  * Created by jt, Spring Framework Guru.
  */
 public class KeyUtils {
+
+    private KeyUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static byte[] generateAESKey() throws NoSuchAlgorithmException {
         javax.crypto.KeyGenerator keyGen = javax.crypto.KeyGenerator.getInstance("AES");
         keyGen.init(256);
