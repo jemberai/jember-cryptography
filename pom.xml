@@ -42,7 +42,7 @@
   </modules>
 
   <properties>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/**/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/**/target/site/jacoco/jacoco.xml, ${project.basedir}/jember-cryptography-library/target/site/jacoco/jacoco.xml, ${project.basedir}/jember-cryptography-jpa/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <organization>
