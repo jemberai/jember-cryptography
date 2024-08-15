@@ -1,9 +1,7 @@
 name: Deploy New Version
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
       - main
 jobs:
@@ -15,9 +13,17 @@ jobs:
     steps:
       - run: echo "Will start a Maven Central upload with version ${{ github.event.inputs.releaseversion }}"
 
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Bump version and push tag
         id: bump
@@ -48,7 +54,7 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
-        run: mvn --batch-mode clean deploy --no-transfer-progress -P central-deploy -DskipTests=true
+        run: mvn --batch-mode clean deploy --no-transfer-progress -P central-deploy -P coverage org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=jemberai_jember-cryptography
 
       - name: Generate changelog
         id: changelog
