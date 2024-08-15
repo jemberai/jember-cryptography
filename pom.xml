@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.jemberai</groupId>
     <artifactId>jember-spring-bom</artifactId>
-    <version>0.10.0</version>
+    <version>0.12.0</version>
   </parent>
 
   <artifactId>jember-cryptography</artifactId>
