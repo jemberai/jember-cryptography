@@ -42,7 +42,7 @@
   </modules>
 
   <properties>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/**/target/site/jacoco/jacoco.xml, ./jember-cryptography-library/target/site/jacoco/jacoco.xml, ./jember-cryptography-jpa/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/**/target/site/jacoco/jacoco.xml, ${maven.multiModuleProjectDirectory}/jember-cryptography-library/target/site/jacoco/jacoco.xml, ${maven.multiModuleProjectDirectory}/jember-cryptography-jpa/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
     <maven-failsafe-plugin.version>3.3.1</maven-failsafe-plugin.version>
   </properties>
