@@ -67,13 +67,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body: |
-            Grab the new version from Maven central https://repo1.maven.org/maven2/org/jemberai/jember-mvn-parent/${{ github.event.inputs.releaseversion }}/ by using it in your deps (also use the newest cxf-spring-boot-starter-maven-plugin https://github.com/codecentric/cxf-spring-boot-starter-maven-plugin):
+            Grab the new version from Maven central https://repo1.maven.org/maven2/org/jemberai/jember-cryptography/${{ github.event.inputs.releaseversion }} by using it in your deps.
 
             ```
             <dependencies>
             	<dependency>
             	    <groupId>org.jemberai</groupId>
-            	    <artifactId>jember-mvn-parent</artifactId>
+            	    <artifactId>jember-cryptography</artifactId>
             	    <version>${{ steps.bump.outputs.new_tag }}</version>
             	</dependency>
             </dependencies>
