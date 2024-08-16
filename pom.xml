@@ -43,7 +43,6 @@
 
   <properties>
     <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/**/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-    <sonar.coverage.exclusions>${maven.multiModuleProjectDirectory}/**/src/main/org/jemberai/cryptography/domain/*.java</sonar.coverage.exclusions>
   </properties>
 
   <organization>
