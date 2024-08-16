@@ -107,7 +107,6 @@ class EncryptionProviderImplTest {
             val someval = "foo";
 
             val encrypted = encryptionProvider.encrypt(clientId, someval);
-
             val decrypted = encryptionProvider.decryptToString(clientId, encrypted);
 
             assertEquals(someval, decrypted);

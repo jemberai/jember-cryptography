@@ -98,7 +98,6 @@ public class EncryptionKeys {
         if (o == null) return false;
         Class<?> oEffectiveClass = o instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass.getClass() != oEffectiveClass.getClass()) return false;
         if (thisEffectiveClass != oEffectiveClass) return false;
         EncryptionKeys aesKeyEq = (EncryptionKeys) o;
         return getId() != null && Objects.equals(getId(), aesKeyEq.getId());
