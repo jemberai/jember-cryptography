@@ -132,6 +132,26 @@ class EncryptionProviderImplTest {
             assertThrows(EncryptionException.class, () -> encryptionProvider.decryptToString(clientId, alteredString));
         }
 
+        @DisplayName("Test decrypting altered payload")
+        @Test
+        void decryptAlteredHamc() {
+            val someval = "foo";
+
+            val encrypted = encryptionProvider.encrypt(clientId, someval);
+
+            EncryptedValueDTO dto = MarshallingUtil.unmarshal(encrypted);
+
+            EncryptedValueDTO altered = new EncryptedValueDTO(dto.provider(),
+                    dto.keyId(),
+                    dto.initializationVector(),
+                    dto.encryptedValue(),
+                    "This is a altered hmac".getBytes());
+
+            String alteredString = MarshallingUtil.marshal(altered);
+
+            assertThrows(EncryptionException.class, () -> encryptionProvider.decryptToString(clientId, alteredString));
+        }
+
         @DisplayName("Test decrypting with multiple keys")
         @Test
         void decryptWithMultipleKeys() {
