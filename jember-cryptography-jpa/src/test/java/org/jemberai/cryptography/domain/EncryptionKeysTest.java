@@ -19,7 +19,6 @@
 package org.jemberai.cryptography.domain;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -35,10 +34,6 @@ class EncryptionKeysTest {
     public static final LocalDateTime NOW = LocalDateTime.now();
 
     EncryptionKeys encryptionKeys = getEncryptionKeys();
-
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void testEquals() {
@@ -60,7 +55,7 @@ class EncryptionKeysTest {
 
     @Test
     void testHashCode() {
-        assertThat(encryptionKeys.hashCode()).isEqualTo(getEncryptionKeys().hashCode());
+        assertThat(encryptionKeys.hashCode()).hasSameHashCodeAs(getEncryptionKeys().hashCode());
     }
 
 

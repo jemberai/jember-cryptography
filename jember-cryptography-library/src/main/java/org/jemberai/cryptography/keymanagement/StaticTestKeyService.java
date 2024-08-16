@@ -30,6 +30,7 @@ import java.util.UUID;
 @Slf4j
 public class StaticTestKeyService implements KeyService {
 
+    public static final String FOR_PRODUCTION_USE = "Using Key Service for Testing. NOT FOR PRODUCTION USE!";
     public final AesKeyDTO defaultKey = new AesKeyDTO("test-client", "19aea7c1-e621-43f6-8bcc-e2851f78a871",
             "6dzTInCNtUWROj5+f3oIoUTwGyvJonJx6WF2Dmghjvs=",
             "MfbthCp4gUygOJRT/stXGCFQzsn7iSHQpPOZRZ8UVBQ=");
@@ -37,31 +38,31 @@ public class StaticTestKeyService implements KeyService {
     @Override
     public AesKeyDTO addKey(String clientId, AesKeyDTO key) {
         //effectively a no-op
-        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
+        log.warn(FOR_PRODUCTION_USE);
         return defaultKey;
     }
 
     @Override
     public void setDefaultKey(String clientId, AesKeyDTO key) {
         // do nothing
-        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
+        log.warn(FOR_PRODUCTION_USE);
     }
 
     @Override
     public AesKeyDTO getDefaultKey(String clientId) {
-        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
+        log.warn(FOR_PRODUCTION_USE);
         return defaultKey;
     }
 
     @Override
     public AesKeyDTO getKey(String clientId, String keyId) {
-        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
+        log.warn(FOR_PRODUCTION_USE);
         return defaultKey;
     }
 
     @Override
     public AesKeyDTO getKey(String clientId, UUID keyId) {
-        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
+        log.warn(FOR_PRODUCTION_USE);
         return defaultKey;
     }
 }

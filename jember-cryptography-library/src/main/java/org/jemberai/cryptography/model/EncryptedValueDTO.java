@@ -47,14 +47,11 @@ public record EncryptedValueDTO(String provider,
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EncryptedValueDTO(String provider,
-                                             UUID keyId,
-                                             byte[] hmac,
-                                             byte[] encryptedValue,
-                                             byte[] initializationVector))) return false;
-
+        if (o == null || getClass() != o.getClass()) return false;
         EncryptedValueDTO that = (EncryptedValueDTO) o;
-        return Objects.equals(keyId, that.keyId) && Arrays.equals(hmac, that.hmac) && Objects.equals(provider, that.provider) && Arrays.equals(encryptedValue, that.encryptedValue) && Arrays.equals(initializationVector, that.initializationVector);
+        return Objects.equals(keyId, that.keyId) && Arrays.equals(hmac, that.hmac)
+                && Objects.equals(provider, that.provider) && Arrays.equals(encryptedValue, that.encryptedValue)
+                && Arrays.equals(initializationVector, that.initializationVector);
     }
 
     @Override

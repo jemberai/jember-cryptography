@@ -61,7 +61,7 @@ class DefaultEncryptionKeyTest {
 
     @Test
     void testHashEquals() {
-        assertThat(key.hashCode()).isEqualTo(getTestKey().hashCode());
+        assertThat(key.hashCode()).hasSameHashCodeAs(getTestKey().hashCode());
     }
 
     DefaultEncryptionKey getTestKey() {
