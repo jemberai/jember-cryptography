@@ -19,8 +19,7 @@
 package org.jemberai.cryptography.domain;
 
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -29,6 +28,9 @@ import java.util.UUID;
  */
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Embeddable
 public class EncryptedValueWrapper {
     private String provider;

@@ -18,16 +18,16 @@
 
 package org.jemberai.cryptography.keymanagement;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.UUID;
 
 /**
  * Implementation of KeyService for testing. NOT FOR PRODUCTION USE!
- *
- * @deprecated - Marking this as deprecated to flag this is not production use.
- *
+ * <p>
  * Created by jt, Spring Framework Guru.
  */
-@Deprecated(since = "0.1.0", forRemoval = false)
+@Slf4j
 public class StaticTestKeyService implements KeyService {
 
     public final AesKeyDTO defaultKey = new AesKeyDTO("test-client", "19aea7c1-e621-43f6-8bcc-e2851f78a871",
@@ -37,26 +37,31 @@ public class StaticTestKeyService implements KeyService {
     @Override
     public AesKeyDTO addKey(String clientId, AesKeyDTO key) {
         //effectively a no-op
+        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
         return defaultKey;
     }
 
     @Override
     public void setDefaultKey(String clientId, AesKeyDTO key) {
         // do nothing
+        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
     }
 
     @Override
     public AesKeyDTO getDefaultKey(String clientId) {
+        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
         return defaultKey;
     }
 
     @Override
     public AesKeyDTO getKey(String clientId, String keyId) {
+        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
         return defaultKey;
     }
 
     @Override
     public AesKeyDTO getKey(String clientId, UUID keyId) {
+        log.warn("Using Key Service for Testing. NOT FOR PRODUCTION USE!");
         return defaultKey;
     }
 }

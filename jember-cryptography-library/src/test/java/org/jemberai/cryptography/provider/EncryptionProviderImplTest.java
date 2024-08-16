@@ -176,9 +176,12 @@ class EncryptionProviderImplTest {
         }
 
         @Test
-        void testNullAesCreateDto() {
-
+        void testNullAesCreateDtoNulls() {
             assertThrows(NullPointerException.class, () -> AesKeyDTO.builder().build());
+        }
+
+        @Test
+        void testNullAesCreateDtoNullKeyId() {
             assertThrows(NullPointerException.class, () -> AesKeyDTO.builder().clientId("foo").build());
         }
 

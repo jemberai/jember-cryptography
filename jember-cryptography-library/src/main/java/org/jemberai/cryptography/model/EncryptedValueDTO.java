@@ -30,7 +30,6 @@ import java.util.UUID;
  * @param encryptedValue base64 of the encrypted value
  * @param initializationVector base64 of the initialization vector of the encrypted value
  */
-
 public record EncryptedValueDTO(String provider,
                                 UUID keyId,
                                 byte[] hmac,
@@ -38,10 +37,23 @@ public record EncryptedValueDTO(String provider,
                                 byte[] initializationVector) {
 
     @Override
+    public String toString() {
+        return "EncryptedValueDTO{" +
+                "provider='" + provider + '\'' +
+                ", keyId=" + keyId +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EncryptedValueDTO that)) return false;
+        if (!(o instanceof EncryptedValueDTO(String provider,
+                                             UUID keyId,
+                                             byte[] hmac,
+                                             byte[] encryptedValue,
+                                             byte[] initializationVector))) return false;
 
+        EncryptedValueDTO that = (EncryptedValueDTO) o;
         return Objects.equals(keyId, that.keyId) && Arrays.equals(hmac, that.hmac) && Objects.equals(provider, that.provider) && Arrays.equals(encryptedValue, that.encryptedValue) && Arrays.equals(initializationVector, that.initializationVector);
     }
 
