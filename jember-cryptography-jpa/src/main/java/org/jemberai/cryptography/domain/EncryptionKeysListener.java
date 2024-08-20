@@ -23,8 +23,11 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jemberai.cryptography.converters.EncryptedValueDtoConverter;
+import org.jemberai.cryptography.converters.EncryptedValueWrapperConverter;
 import org.jemberai.cryptography.model.EncryptedValueDTO;
 import org.jemberai.cryptography.provider.EncryptionProvider;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,6 +39,9 @@ import org.springframework.stereotype.Component;
 public class EncryptionKeysListener {
 
     private final EncryptionProvider encryptionProvider;
+
+    private final Converter<EncryptedValueDTO, EncryptedValueWrapper> encryptedValueDtoConverter = new EncryptedValueDtoConverter();
+    private final Converter<EncryptedValueWrapper, EncryptedValueDTO> encryptedValueWrapperConverter = new EncryptedValueWrapperConverter();
 
     public static final String JEMBER_INTERNAL = "JEMBER_INTERNAL";
 
@@ -52,8 +58,8 @@ public class EncryptionKeysListener {
     @PostLoad
     public void postLoad(EncryptionKeys aesKey) {
         log.debug("Decrypting AES Key");
-        aesKey.setHmacKey(encryptionProvider.decrypt(JEMBER_INTERNAL, convert(aesKey.getEncryptedHmacKeyValue())));
-        aesKey.setAesKey(encryptionProvider.decrypt(JEMBER_INTERNAL, convert(aesKey.getEncryptedAesKeyValue())));
+        aesKey.setHmacKey(encryptionProvider.decrypt(JEMBER_INTERNAL, encryptedValueWrapperConverter.convert(aesKey.getEncryptedHmacKeyValue())));
+        aesKey.setAesKey(encryptionProvider.decrypt(JEMBER_INTERNAL, encryptedValueWrapperConverter.convert(aesKey.getEncryptedAesKeyValue())));
     }
 
     private void setEncryptedFields(EncryptionKeys aesKey){
@@ -61,26 +67,7 @@ public class EncryptionKeysListener {
         EncryptedValueDTO aesDto = encryptionProvider.encrypt(JEMBER_INTERNAL, aesKey.getAesKey());
         EncryptedValueDTO hmacDto = encryptionProvider.encrypt(JEMBER_INTERNAL, aesKey.getHmacKey());
 
-        aesKey.setEncryptedAesKeyValue(convert(aesDto));
-        aesKey.setEncryptedHmacKeyValue(convert(hmacDto));
-    }
-
-    private EncryptedValueWrapper convert(EncryptedValueDTO encryptedValueDTO) {
-        EncryptedValueWrapper encryptedValue = new EncryptedValueWrapper();
-        encryptedValue.setKeyId(encryptedValueDTO.keyId());
-        encryptedValue.setProvider(encryptedValueDTO.provider());
-        encryptedValue.setHmac(encryptedValueDTO.hmac());
-        encryptedValue.setEncryptedValue(encryptedValueDTO.encryptedValue());
-        encryptedValue.setInitializationVector(encryptedValueDTO.initializationVector());
-
-        return encryptedValue;
-    }
-
-    private EncryptedValueDTO convert(EncryptedValueWrapper encryptedValue) {
-        return new EncryptedValueDTO(encryptedValue.getProvider(),
-                        encryptedValue.getKeyId(),
-                        encryptedValue.getHmac(),
-                        encryptedValue.getEncryptedValue(),
-                        encryptedValue.getInitializationVector());
+        aesKey.setEncryptedAesKeyValue(encryptedValueDtoConverter.convert(aesDto));
+        aesKey.setEncryptedHmacKeyValue(encryptedValueDtoConverter.convert(hmacDto));
     }
 }
