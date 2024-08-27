@@ -21,12 +21,12 @@ package org.jemberai.cryptography.domain;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jemberai.cryptography.converters.EncryptedValueDtoConverter;
 import org.jemberai.cryptography.converters.EncryptedValueWrapperConverter;
 import org.jemberai.cryptography.model.EncryptedValueDTO;
 import org.jemberai.cryptography.provider.EncryptionProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -34,14 +34,16 @@ import org.springframework.stereotype.Component;
  * Created by jt, Spring Framework Guru.
  */
 @Slf4j
-@RequiredArgsConstructor
 @Component
 public class EncryptionKeysListener {
 
     private final EncryptionProvider encryptionProvider;
-
     private final Converter<EncryptedValueDTO, EncryptedValueWrapper> encryptedValueDtoConverter = new EncryptedValueDtoConverter();
     private final Converter<EncryptedValueWrapper, EncryptedValueDTO> encryptedValueWrapperConverter = new EncryptedValueWrapperConverter();
+
+    public EncryptionKeysListener(@Qualifier("encryptionProviderInternal") EncryptionProvider encryptionProvider) {
+        this.encryptionProvider = encryptionProvider;
+    }
 
     public static final String JEMBER_INTERNAL = "JEMBER_INTERNAL";
 

@@ -39,7 +39,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-@Table(name = "default_key")
+@Table(name = "default_encryption_key")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -59,13 +59,15 @@ public class DefaultEncryptionKey {
     private String clientId;
 
     @OneToOne
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @JoinColumn(name = "default_key_id", referencedColumnName = "id", columnDefinition = "char(36)")
     private EncryptionKeys defaultKey;
 
     @CreationTimestamp
-    private LocalDateTime createdDate;
+    private LocalDateTime dateCreated;
 
     @UpdateTimestamp
-    private LocalDateTime updateDate;
+    private LocalDateTime dateUpdated;
 
     @Override
     public final boolean equals(Object o) {
