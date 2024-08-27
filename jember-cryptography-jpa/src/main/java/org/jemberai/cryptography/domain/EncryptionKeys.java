@@ -36,7 +36,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @Entity
-@Table(name = "aes_key")
+@Table(name = "encryption_keys")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -71,7 +71,7 @@ public class EncryptionKeys {
             @AttributeOverride(name = "keyId", column = @Column(name = "aes_key_id")),
             @AttributeOverride(name = "provider", column = @Column(name = "aes_provider")),
             @AttributeOverride(name = "hmac", column = @Column(name = "aes_hmac")),
-            @AttributeOverride(name = "initializationVector", column = @Column(name = "aes_intitialization_vector")),
+            @AttributeOverride(name = "initializationVector", column = @Column(name = "aes_initialization_vector")),
             @AttributeOverride(name = "encryptedValue", column = @Column(name = "aes_encrypted_value"))
     })
     private EncryptedValueWrapper encryptedAesKeyValue;
@@ -81,16 +81,16 @@ public class EncryptionKeys {
             @AttributeOverride(name = "keyId", column = @Column(name = "hmac_key_id")),
             @AttributeOverride(name = "provider", column = @Column(name = "hmac_provider")),
             @AttributeOverride(name = "hmac", column = @Column(name = "hmac_hmac")),
-            @AttributeOverride(name = "initializationVector", column = @Column(name = "hmac_intitialization_vector")),
+            @AttributeOverride(name = "initializationVector", column = @Column(name = "hmac_initialization_vector")),
             @AttributeOverride(name = "encryptedValue", column = @Column(name = "hmac_encrypted_value"))
     })
     private EncryptedValueWrapper encryptedHmacKeyValue;
 
     @CreationTimestamp
-    private LocalDateTime createdDate;
+    private LocalDateTime dateCreated;
 
     @UpdateTimestamp
-    private LocalDateTime updateDate;
+    private LocalDateTime dateUpdated;
 
     @Override
     public final boolean equals(Object o) {

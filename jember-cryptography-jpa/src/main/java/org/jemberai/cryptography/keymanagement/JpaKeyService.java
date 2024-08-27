@@ -25,6 +25,7 @@ import org.jemberai.cryptography.domain.DefaultEncryptionKey;
 import org.jemberai.cryptography.domain.EncryptionKeys;
 import org.jemberai.cryptography.repositories.DefaultEncryptionKeyRepository;
 import org.jemberai.cryptography.repositories.EncryptionKeysRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -93,6 +94,7 @@ public class JpaKeyService implements KeyService {
                 .build());
     }
 
+    @Cacheable("defaultKey")
     @Override
     public AesKeyDTO getDefaultKey(@NonNull String clientId) {
         return defaultKeyRepository.findByClientId(clientId)
@@ -101,6 +103,7 @@ public class JpaKeyService implements KeyService {
                 .orElse(null);
     }
 
+    @Cacheable("getKeyById")
     @Override
     public AesKeyDTO getKey(@NonNull String clientId, @NonNull String keyId) {
         return aesKeyRepository.findByClientIdAndKeyId(clientId, UUID.fromString(keyId))

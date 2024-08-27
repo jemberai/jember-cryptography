@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 public class DefaultConfig {
 
     @Bean
-    public EncryptionProvider encryptionProvider() {
+    public EncryptionProvider encryptionProviderInternal() {
         return new EncryptionProviderImpl(new StaticTestKeyService());
     }
 
