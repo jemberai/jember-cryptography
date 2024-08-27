@@ -25,6 +25,7 @@ import org.jemberai.cryptography.domain.DefaultEncryptionKey;
 import org.jemberai.cryptography.domain.EncryptionKeys;
 import org.jemberai.cryptography.repositories.DefaultEncryptionKeyRepository;
 import org.jemberai.cryptography.repositories.EncryptionKeysRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,6 +80,7 @@ public class JpaKeyService implements KeyService {
      * @param key      The key to set as the default.
      */
     @Transactional
+    @CacheEvict(value = "defaultKey", key = "#clientId")
     @Override
     public void setDefaultKey(@NonNull String clientId, @NonNull AesKeyDTO key) {
 
@@ -88,19 +90,27 @@ public class JpaKeyService implements KeyService {
         // delete the existing default key. Simplest way to handle this vs checking if it exists & updating.
         defaultKeyRepository.deleteByClientId(clientId);
 
-        defaultKeyRepository.save(DefaultEncryptionKey.builder()
+        defaultKeyRepository.saveAndFlush(DefaultEncryptionKey.builder()
                 .clientId(clientId)
                 .defaultKey(savedKey)
                 .build());
     }
 
-    @Cacheable("defaultKey")
+    @Cacheable(value = "defaultKey", key = "#clientId", unless="#result == null")
     @Override
     public AesKeyDTO getDefaultKey(@NonNull String clientId) {
-        return defaultKeyRepository.findByClientId(clientId)
+        AesKeyDTO dto =  defaultKeyRepository.findByClientId(clientId)
                 .map(DefaultEncryptionKey::getDefaultKey)
                 .map(this::convert)
                 .orElse(null);
+
+        if (dto == null) {
+            log.warn("Default key not found for client id: {}", clientId);
+        } else {
+            log.info("Default key found for client id: {}", dto.getClientId());
+        }
+
+        return dto;
     }
 
     @Cacheable("getKeyById")
